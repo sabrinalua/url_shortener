@@ -70,9 +70,9 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionAbout()
     {
-        return $this->render('index');
+        return $this->render('about');
     }
 
     private function UaParser($ua){
@@ -132,7 +132,7 @@ class SiteController extends Controller
 
     }
 
-    public function actionShort(){
+    public function actionIndex(){
        $homeurl = \yii\helpers\Url::home();
         $servername = Yii::$app->getRequest()->serverName;
 
@@ -140,7 +140,6 @@ class SiteController extends Controller
                 ->queryAll();
         $i=0;
         foreach($shortener as $s){
-            var_dump($s['id']);
             $hit = Access::find()->where(['key_id'=>$s['id']])->count();
             $shortener[$i]['hits']= $hit;
             unset($shortener[$i]['id']);

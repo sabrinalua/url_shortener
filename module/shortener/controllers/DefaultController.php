@@ -65,11 +65,11 @@ class DefaultController extends Controller
             $short = Shortener::findOne(['key'=>$key]);
             if(sizeof($short)==1){
                 $count = Access::find()->where(['key_id'=>$short->id])->count();
-                $access = Yii::$app->db->createCommand("SELECT date(access_date) as date, count(access_date) as hits FROM `access` where key_id= :id and date(access_date) BETWEEN NOW() - INTERVAL 30 DAY AND NOW() group by date(access_date)")
+                $access = Yii::$app->db->createCommand("SELECT date(access_date) as date, count(access_date) as hits FROM `access` where key_id= :id and date(access_date) BETWEEN NOW() - INTERVAL 7 DAY AND NOW() group by date(access_date)")
                 ->bindValues([':id'=>$short->id])
                 ->queryAll();
 
-                $frequency = Yii::$app->db->createCommand("select date, hits from (SELECT date(access_date) as date, count(access_date) as hits FROM `access` where key_id= :id group by date(access_date) order by hits)a limit 1")
+                $frequency = Yii::$app->db->createCommand("select date, hits from (SELECT date(access_date) as date, count(access_date) as hits FROM `access` where key_id= :id group by date(access_date) order by hits desc)a limit 1")
                 ->bindValues([':id'=>$short->id])
                 ->queryAll();
 
@@ -80,8 +80,8 @@ class DefaultController extends Controller
 
                 $bhits = self::browserAccess($short->id);
                 $oshits = self::osAccess($short->id);
-                $summary = ['url'=>$url,'total_hits'=>$count, 'most_frequent_hits'=>$most_frequent_hits, 'browser_access'=>$bhits, 'os_access'=>$oshits];
-                return ['hits_within_30_days'=>$access, 'summary'=>$summary];
+                $summary = ['url'=>$url,'total_hits'=>$count, 'hits_in_past_week'=>$access, 'most_frequent_hits'=>$most_frequent_hits, 'browser_access'=>$bhits, 'os_access'=>$oshits];
+                return $summary;
             }else{
                 throw new \yii\web\HttpException(400, "This shortened url doesn't exist",3838);
             }            

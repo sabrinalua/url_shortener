@@ -4,6 +4,8 @@
 /* @var $content string */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
+
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
@@ -29,8 +31,8 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'My Company',
-        'brandUrl' => Yii::$app->homeUrl,
+        'brandLabel' => Yii::$app->params['appName'],
+        'brandUrl' => Yii::$app->homeUrl,/*Url::toRoute(['site/short']),*/
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
@@ -38,7 +40,7 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Shorten URL', 'url' => ['/site/short']],
+            ['label' => 'readme', 'url' => ['/site/about']],
         ],
     ]);
     NavBar::end();
