@@ -34,7 +34,7 @@ DB TABLES
     -  [id(pk), key_id, ip_address, city, region, country, geolocation, os, browser, browser_version, device_type, access_date]
     - stores details on traffic to shortened key
 
-EXTERBAL DEPENDENCIES
+EXTERNAL DEPENDENCIES
 -------------------
 1. https://github.com/jenssegers/agent - parse UA details
 2. http://ipinfo.io/ - get info based on ip address

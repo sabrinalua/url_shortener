@@ -11,7 +11,7 @@
 
 		<div class="form-group field-shortener-url required">
 			<p class="lead">Enter an url to be shortened</p>
-			<input type="url" id="to_shorten" class="form-control"  name="to_shorten" aria-required="true" required="true" size="200">
+			<input placeholder="https://" type="url" id="to_shorten" class="form-control"  name="to_shorten" aria-required="true" required="true" size="200">
 			<div class="help-block"></div>
 
 			<div style="text-align:center">  
@@ -22,8 +22,10 @@
 
 		</form>
 		<div id="result_div" style="display:none;">
-			<p class="lead" id="kk">Successfully shortened url:</p>
-			<textarea align="center" class="form-control" rows="1" cols="1" onclick="this.focus();this.select()" readonly="readonly" id= "result" style="vertical-align:middle;">http://google.com.my</textarea>
+			<p class="lead" id="kk">successfully shortened url:</p>
+			<textarea align="center" class="form-control" rows="1" cols="1" onclick="this.focus();this.select()" readonly="readonly" id= "result" style="text-align:center;">http://google.com.my</textarea>
+			</br>
+			<h8 style="color:blue;"> to copy url, select the generated url and hit ctrl/cmd + C</h8>
 		</div>
 		
 		
