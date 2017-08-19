@@ -110,19 +110,21 @@ class SiteController extends Controller
 
     public function actionRedirect(){
         $get = Yii::$app->request->get();
+        $u= "unknown";
 
         $shortener = Shortener::findOne(['key'=>$get['text']]);
         if(sizeof($shortener)==1){
+            $ua = Yii::$app->request->getUserAgent();
             try{
                 $details = json_decode(file_get_contents("http://ipinfo.io/"));
                 $access = new Access();
                 $ua_details =self::UaParser($ua); 
                 $access->key_id =$shortener->id;
-                $access->ip_address = $details->ip;
-                $access->city= $details->city;
-                $access->region= $details->region;
-                $access->country= $details->country;
-                $access->geolocation= $details->loc;
+                $access->ip_address = strlen($details->ip) > 0 ? $details->ip: $u;
+                $access->city= strlen($details->city) >0 ? $details->city: $u;
+                $access->region= strlen($details->region)>0 ? $details->region : $u;
+                $access->country= strlen($details->country)>0? $details->country: $u;
+                $access->geolocation= strlen($details->loc)>0? $details->loc: $u;
                 $access->os= $ua_details['os'];
                 $access->browser= $ua_details['browser'];
                 $access->browser_version= $ua_details['browser_version'];
@@ -130,7 +132,21 @@ class SiteController extends Controller
                 $access->save(false);
                 return $this->redirect($shortener->url, 302);
             }catch(\Exception $e){
-                return $this->render('error', ['message'=>"the server isn't online; unable to capture ipinfo", "name"=>"Error"]);
+                $accessx = new Access();
+                $ua_details =self::UaParser($ua); 
+                $accessx->key_id =$shortener->id;
+                $accessx->ip_address = $u;
+                $accessx->city= $u;
+                $accessx->region= $u;
+                $accessx->country= $u;
+                $accessx->geolocation= $u;
+                $accessx->os= $ua_details['os'];
+                $accessx->browser= $ua_details['browser'];
+                $accessx->browser_version= $ua_details['browser_version'];
+                $accessx->device_type= $ua_details['type'];
+                $accessx->save(false);
+                return $this->redirect($shortener->url, 302);
+                // return $this->render('error', ['message'=>"the server isn't online; unable to capture ipinfo", "name"=>"Error"]);
             }
         }else{
             return $this->render('error', ['message'=>"the shortened url doesn't exist", "name"=>"Error"]);
