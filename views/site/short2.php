@@ -16,11 +16,11 @@
 
 			<div style="text-align:center">  
 			</br>
-			<input type="submit" id="submit_btn" value="Submit" align="center">
+			<input class="btn btn-success" type="submit" id="submit_btn" value="Submit" align="center">
 			</div>
 		</div> 
-
 		</form>
+
 		<div id="result_div" style="display:none;">
 			<p class="lead" id="kk">successfully shortened url:</p>
 			<textarea align="center" class="form-control" rows="1" cols="1" onclick="this.focus();this.select()" readonly="readonly" id= "result" style="text-align:center;">http://google.com.my</textarea>
@@ -34,7 +34,6 @@
 	<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
 	<script>
-	// just for the demos, avoids form submit
 	jQuery.validator.setDefaults({
 	  debug: true,
 	  success: "valid"

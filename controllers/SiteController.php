@@ -65,6 +65,19 @@ class SiteController extends Controller
         ];
     }
 
+    public function actionDownload(){
+        $get = Yii::$app->request->get();
+        $type = $get['type'];
+
+        switch ($type) {
+            case 'all':
+                Yii::$app->response->sendFile(__DIR__.'/allkeys.json', "all_example.json");
+                break;
+            case 'key':
+                Yii::$app->response->sendFile(__DIR__.'/stat_by_key.json', "stat_by_key.json");
+                break;
+        }
+    }
     /**
      * Displays homepage.
      *
@@ -97,26 +110,28 @@ class SiteController extends Controller
 
     public function actionRedirect(){
         $get = Yii::$app->request->get();
-        
+
         $shortener = Shortener::findOne(['key'=>$get['text']]);
         if(sizeof($shortener)==1){
-            $ua = Yii::$app->request->getUserAgent();
-            $details = json_decode(file_get_contents("http://ipinfo.io/"));
-            $access = new Access();
-            $ua_details =self::UaParser($ua); 
-            $access->key_id =$shortener->id;
-            $access->ip_address = $details->ip;
-            $access->city= $details->city;
-            $access->region= $details->region;
-            $access->country= $details->country;
-            $access->geolocation= $details->loc;
-            $access->os= $ua_details['os'];
-            $access->browser= $ua_details['browser'];
-            $access->browser_version= $ua_details['browser_version'];
-            $access->device_type= $ua_details['type'];
-            $access->save(false);
-            return $this->redirect($shortener->url, 302);
-
+            try{
+                $details = json_decode(file_get_contents("http://ipinfo.io/"));
+                $access = new Access();
+                $ua_details =self::UaParser($ua); 
+                $access->key_id =$shortener->id;
+                $access->ip_address = $details->ip;
+                $access->city= $details->city;
+                $access->region= $details->region;
+                $access->country= $details->country;
+                $access->geolocation= $details->loc;
+                $access->os= $ua_details['os'];
+                $access->browser= $ua_details['browser'];
+                $access->browser_version= $ua_details['browser_version'];
+                $access->device_type= $ua_details['type'];
+                $access->save(false);
+                return $this->redirect($shortener->url, 302);
+            }catch(\Exception $e){
+                return $this->render('error', ['message'=>"the server isn't online; unable to capture ipinfo", "name"=>"Error"]);
+            }
         }else{
             return $this->render('error', ['message'=>"the shortened url doesn't exist", "name"=>"Error"]);
         }
@@ -148,39 +163,4 @@ class SiteController extends Controller
         return $this->render('short2', ['home'=>$servername.$homeurl, 'urls'=>$shortener]);
     }
 
-    /*public function actionShortener2(){
-        $homeurl = \yii\helpers\Url::home();
-        $servername = Yii::$app->getRequest()->serverName;
-        $get = Yii::$app->request->get();
-        $key = $get['key'];
-        return $this->render('url_shortener_rdr', ['servername'=>$servername,'homeurl'=>$homeurl, 'key'=>$key]);
-    }*/
-
-    /*
-    public function actionShortener(){
-        $homeurl = \yii\helpers\Url::home();
-        $servername = Yii::$app->getRequest()->serverName;
-
-        $model = new Shortener();
-        if ($model->load(Yii::$app->request->post())) {
-            if ($model->validate()) {
-                $model->key = self::short($model->url);
-                $model->url = $model->url;
-                // $bool = $model->save(false)? 1:0;
-                $key = $model->key;
-                if($model->save()){
-
-                    Yii::$app->getSession()->setFlash('key', $model->key);
-                    // return $this->redirect(['site/shortener2','key'=>$model->key]);
-                }else{
-                     $model->key = self::short($model->url);
-                     $model->save();
-                }
-            }
-        }
-        return $this->render('url_shortener', [
-            'model' => $model,
-        ]);
-    }
-    */
 }

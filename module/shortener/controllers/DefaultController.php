@@ -47,52 +47,6 @@ class DefaultController extends Controller
         return $array;        
     }
 
-    public function actionList(){
-        $get = Yii::$app->request->get();
-        $url = $get['url'];
-        $array = explode("/", $url);
-
-        $homeurl = \yii\helpers\Url::home();
-        $servername = Yii::$app->getRequest()->serverName;
-        $path = $servername.$homeurl;
-        $length_path = strlen($path);
-
-        // return ['path'=>$path, 'v'=>substr($url, 0, $length_path)];
-        $url_cleaned = preg_replace('#^https?://#', '', $url);
-        // return $url_cleaned;
-        if(substr($url_cleaned, 0, $length_path)===$path){
-            $key =$array[sizeof($array)-1];
-            $short = Shortener::findOne(['key'=>$key]);
-            if(sizeof($short)==1){
-                $count = Access::find()->where(['key_id'=>$short->id])->count();
-                $access = Yii::$app->db->createCommand("SELECT date(access_date) as date, count(access_date) as hits FROM `access` where key_id= :id and date(access_date) BETWEEN NOW() - INTERVAL 7 DAY AND NOW() group by date(access_date)")
-                ->bindValues([':id'=>$short->id])
-                ->queryAll();
-
-                $frequency = Yii::$app->db->createCommand("select date, hits from (SELECT date(access_date) as date, count(access_date) as hits FROM `access` where key_id= :id group by date(access_date) order by hits desc)a limit 1")
-                ->bindValues([':id'=>$short->id])
-                ->queryAll();
-
-                $most_frequent_hits='';
-                if(sizeof($frequency)==1){
-                    $most_frequent_hits=$frequency[0]['date'].' ('.$frequency[0]['hits'].')';
-                }
-
-                $bhits = self::browserAccess($short->id);
-                $oshits = self::osAccess($short->id);
-                $summary = ['url'=>$url,'total_hits'=>$count, 'hits_in_past_week'=>$access, 'most_frequent_hits'=>$most_frequent_hits, 'browser_access'=>$bhits, 'os_access'=>$oshits];
-                return $summary;
-            }else{
-                throw new \yii\web\HttpException(400, "This shortened url doesn't exist",3838);
-            }            
-        }else{
-            // return substr($url, 0, $length_path)===$path;
-            throw new \yii\web\HttpException(400, "This shortened url doesn't exist",3838);
-        }
-
-
-    }
-
     public function actionAdd(){
         $success = true;
         $post = Yii::$app->request->post();
@@ -117,5 +71,51 @@ class DefaultController extends Controller
     	// $arr = ['one'=>1, 'two'=>2];
     	
         return ['homeurl'=>'localhost'.Yii::$app->homeUrl];
+    }
+
+    public function actionList(){
+        $get = Yii::$app->request->get();
+        $type = $get['type'];
+
+        switch ($type) {
+            case 'key':
+                if(isset($get['key'])){
+                    $key = $get['key'];
+                    $short = Shortener::findOne(['key'=>$key]);
+                    if(sizeof($short)==1){
+                        $count = Access::find()->where(['key_id'=>$short->id])->count();
+                        $access = Yii::$app->db->createCommand("SELECT date(access_date) as date, count(access_date) as hits FROM `access` where key_id= :id and date(access_date) BETWEEN NOW() - INTERVAL 7 DAY AND NOW() group by date(access_date)")
+                        ->bindValues([':id'=>$short->id])
+                        ->queryAll();
+
+                        $frequency = Yii::$app->db->createCommand("select date, hits from (SELECT date(access_date) as date, count(access_date) as hits FROM `access` where key_id= :id group by date(access_date) order by hits desc)a limit 1")
+                        ->bindValues([':id'=>$short->id])
+                        ->queryAll();
+
+                        $most_frequent_hits='';
+                        if(sizeof($frequency)==1){
+                            $most_frequent_hits=$frequency[0]['date'].' ('.$frequency[0]['hits'].')';
+                        }
+
+                        $bhits = self::browserAccess($short->id);
+                        $oshits = self::osAccess($short->id);
+                        $summary = ['key'=>$key,'total_hits'=>$count, 'hits_in_past_week'=>$access, 'most_frequent_hits'=>$most_frequent_hits, 'browser_access'=>$bhits, 'os_access'=>$oshits];
+                        return $summary;
+                    }else{
+                        throw new \yii\web\HttpException(400, "This shortened url doesn't exist",3838);
+                    }
+                }else{ 
+                    throw new \yii\web\HttpException(400, "Please provide a key",3838);
+                }
+                break;
+            case 'all':
+                $short = Shortener::find()->select("url, key")->all();
+                return ['keys'=>$short];
+                break;
+            default:
+                # code...
+                break;
+        }
+
     }
 }

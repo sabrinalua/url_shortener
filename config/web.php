@@ -57,7 +57,9 @@ $config = [
             // 'showScriptName' => false,
             'rules' => [
 
-                'GET <module:api>/<activity:(index|list)>'=>'<module>/default/<activity>',
+                'GET <module:api>/<activity:(index)>'=>'<module>/default/<activity>',
+                'GET <module:api>/<activity:list>/<type:(all|key)>'=>'<module>/default/<activity>',
+
                 'POST <module:api>/<activity:(add)>'=>'<module>/default/<activity>',
 
                 '<controller:\w+>/<action:\w+>'=>'<controller>/<action>',

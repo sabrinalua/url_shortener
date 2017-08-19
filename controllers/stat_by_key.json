@@ -1,0 +1,31 @@
+{
+    "key": "f68d5e41",
+    "total_hits": "5",
+    "hits_in_past_week": [
+        {
+            "date": "2017-08-18",
+            "hits": "4"
+        }
+    ],
+    "most_frequent_hits": "2017-08-18 (4)",
+    "browser_access": [
+        {
+            "browser": "Mozilla",
+            "count": "1"
+        },
+        {
+            "browser": "Chrome",
+            "count": "3"
+        },
+        {
+            "browser": "Safari",
+            "count": "1"
+        }
+    ],
+    "os_access": [
+        {
+            "os": "OS X",
+            "count": "5"
+        }
+    ]
+}
