@@ -4,9 +4,9 @@ WHAT IT DOES
 -------------
 1. takes an url and shortens it
 2. API that:
-	a. lists urls and corresponding keys	GET api/list/key?key={{key}}
-	b. lists stats of each key 				GET api/list/all
-3.
+	- lists urls and corresponding keys	GET api/list/key?key={{key}}
+	- lists stats of each key 				GET api/list/all
+3. tracks traffic to each key (ip, location, browser info)
 
 DB CONFIG
 -------------
