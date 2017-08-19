@@ -1,5 +1,13 @@
-Yii 2 Basic Project Template
+A Simple Url Shortener
 ============================
+WHAT IT DOES
+-------------
+1. takes an url and shortens it
+2. API that:
+	a. lists urls and corresponding keys	GET api/list/key?key={{key}}
+	b. lists stats of each key 				GET api/list/all
+3.
+
 DB CONFIG
 -------------
 Edit the file `config/db.php` with real data, for example:
